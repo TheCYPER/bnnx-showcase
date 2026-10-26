@@ -1,0 +1,137 @@
+/* The site's look, v2 (Percy, 2026-10-23): the carbon.now.sh render he picked, as CSS. A Carbon-blue page, content in
+   dark rounded windows with three control dots, the a11y-dark colours, Fira Code at 14px with 152% line height, no
+   drop shadow, generous radii. Loaded after the demo's style.css on every page: it only redefines that file's tokens
+   and softens its few sharp corners, so the demo pages (copied byte for byte) take the new look without a change.
+   Fira Code is named first in the font stack but not shipped: a page loads nothing from outside, so a computer
+   without it falls back to its own monospace font. */
+
+:root {
+  --blue: #0269d0;            /* Carbon: bg=rgba(2,105,208,1) */
+  --blue-deep: #0357ad;
+  --blue-night: #02448a;
+  --window: #2b2b2b;          /* a11y-dark */
+  --window-raised: #353535;
+  --window-line: #4a4a4a;
+  --code-text: #f8f8f2;
+  --code-comment: #d4d0ab;
+  --code-keyword: #00e0e0;
+  --code-string: #abe338;
+  --code-number: #f5ab35;
+  --code-function: #ffd700;
+  --code-property: #ffa07a;
+  --dot-red: #ff5f56;
+  --dot-yellow: #ffbd2e;
+  --dot-green: #27c93f;
+
+  /* the demo's tokens, mapped onto the new palette */
+  --desk: var(--blue);
+  --desk-raised: var(--blue-deep);
+  --desk-text: #ffffff;
+  --desk-muted: #e8f2fc;      /* 4.7:1 on --blue */
+  --paper: var(--window);
+  --ink: var(--code-text);
+  --ink-muted: var(--code-comment);
+  --rule: var(--window-line);
+  --stamp: var(--code-keyword);
+  --stamp-light: var(--code-function);
+  --alert: var(--code-property);
+  --bit-off: #3d3d3d;
+
+  --mono: "Fira Code", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --radius: 16px;
+  --radius-window: 28px;
+  --radius-card: 22px;
+}
+
+html { background: var(--blue); }
+
+body { background: var(--blue); font-feature-settings: "calt" 1, "liga" 1; }
+
+:focus-visible { outline: 3px solid var(--code-function); outline-offset: 3px; }
+
+.masthead :focus-visible, .facts :focus-visible, .colophon :focus-visible { outline-color: var(--code-function); }
+
+code, pre { font-family: var(--mono); }
+
+/* ------------------------------------------------------------------ the demo's windows (.bench) */
+.bench {
+  position: relative;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--window);
+  border-radius: var(--radius-window);
+  box-shadow: none;
+}
+
+.bench::before, .window::before {
+  content: "";
+  display: block;
+  height: 52px;
+  background:
+    radial-gradient(circle at 30px 26px, var(--dot-red) 0 6.5px, transparent 7.5px),
+    radial-gradient(circle at 54px 26px, var(--dot-yellow) 0 6.5px, transparent 7.5px),
+    radial-gradient(circle at 78px 26px, var(--dot-green) 0 6.5px, transparent 7.5px);
+}
+
+.bench-head { padding-top: 4px; border-bottom-color: var(--window-line); }
+
+.bench-head h2 { font-family: var(--mono); color: var(--code-function); }
+
+.spec, figcaption, .hint, .status, .placeholder { color: var(--code-comment); }
+
+.input { border-right-color: var(--window-line); }
+
+.pad, .bits, .board, .diff-wrap { border-radius: 18px; }
+
+.pad { background: #000; }
+
+button, .upload span { border-radius: 999px; border-color: var(--ink); padding: 10px 18px; }
+
+button:hover, .upload span:hover { color: var(--window); }
+
+button.primary { color: var(--window); }
+
+button.primary:hover { color: var(--window); background: var(--code-function); border-color: var(--code-function); }
+
+.thumb { border-radius: 10px; }
+
+.thumb canvas { border-radius: 8px; }
+
+.stamp { border-radius: 8px; }
+
+.bar span { border-radius: 4px; }
+
+.verdict-value { color: var(--code-function); }
+
+.eyebrow, .picker-label, .verdict-label { text-transform: none; letter-spacing: 0.02em; }
+
+.eyebrow { font-size: 13px; color: var(--desk-muted); }
+
+.masthead h1 code { color: var(--desk-muted); }
+
+.lede { color: var(--desk-muted); }
+
+.fact { border-radius: var(--radius-card); background: var(--blue-night); }
+
+.howto pre { border-radius: var(--radius-card); background: var(--window); }
+
+.colophon { border-top-color: rgba(255, 255, 255, 0.25); color: var(--desk-muted); }
+
+.diff th { border-bottom-color: var(--window-line); }
+
+.diff td { border-bottom-color: var(--window-line); }
+
+.diff td.eq { color: var(--code-keyword); }
+
+.diff tr.top .bar span { background: var(--code-keyword); }
+
+.check-ok { color: var(--code-string); }
+
+.check-bad { color: var(--code-property); }
+
+.node-error, .status.error { color: var(--code-property); }
+
+/* ------------------------------------------------------------------ small screens */
+@media (max-width: 480px) {
+  .bench { border-radius: 22px; }
+}

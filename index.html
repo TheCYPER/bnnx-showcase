@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BNNX · neural networks as contracts</title>
+  <meta name="description" content="Trained neural networks compiled into contracts on BNB Chain. Call them for free, check every answer against a reference program, and build your own.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="site-theme.css">
+  <link rel="stylesheet" href="site-nav.css">
+  <link rel="stylesheet" href="site.css">
+  <script src="site-lang.js"></script>
+</head>
+<body class="home">
+  <header class="sitenav"><div class="sitenav-row"><a class="brand" href="index.html" data-site-link>BNNX</a><nav aria-label="Site"><a href="index.html#concept" data-site-link><span lang="en">Idea</span><span lang="zh">理念</span></a><a href="index.html#progress" data-site-link><span lang="en">Progress</span><span lang="zh">进展</span></a><a href="index.html#demos" data-site-link><span lang="en">Demos</span><span lang="zh">演示</span></a><a href="index.html#build" data-site-link><span lang="en">Build</span><span lang="zh">开发</span></a><a href="models.html" data-site-link><span lang="en">Models</span><span lang="zh">模型</span></a></nav><button type="button" class="lang-toggle" id="lang-toggle" aria-label="Language / 语言">中文 / EN</button></div></header>
+  <p class="testnet-notice"><span lang="en">Preview copy · BSC testnet, not mainnet. Read-only calls: no wallet, nothing to sign.</span><span lang="zh">预览副本 · BSC 测试网，不是主网。只读调用：不需要钱包，没有签名。</span></p>
+
+  <header class="hero wrap">
+    <div class="hero-copy">
+      <p class="eyebrow"><span lang="en">BNNX · live on BSC testnet</span><span lang="zh">BNNX · 已上线 BSC 测试网</span></p>
+      <h1><span lang="en">Run neural networks inside smart contracts</span><span lang="zh">让神经网络直接跑在智能合约里</span></h1>
+      <p class="lede">
+        <span lang="en">BNNX compiles trained models into contracts on BNB Chain. Call one for free, and check every answer against a reference program, integer for integer.</span>
+        <span lang="zh">BNNX 把训练好的模型编译成 BNB Chain 上的合约。免费调用，并和参考程序逐个整数核对每一个答案。</span>
+      </p>
+      <div class="cta-row">
+        <a class="btn" href="#demos"><span lang="en">Try the demos</span><span lang="zh">试试演示</span></a>
+        <a class="btn quiet" href="#build"><span lang="en">Build with it</span><span lang="zh">开始开发</span></a>
+      </div>
+    </div>
+
+    <div class="window hero-window" role="group" aria-labelledby="hero-title">
+      <p class="window-title" id="hero-title"><span lang="en">a real call, running now</span><span lang="zh">一次真实的调用，正在运行</span></p>
+      <div class="hero-grid">
+        <div class="hero-scan-wrap">
+          <canvas id="hero-scan" class="hero-scan" width="308" height="308" role="img"
+                  aria-label="The 28 by 28 bits of a handwritten test digit, as the contract's first layer sees them"></canvas>
+          <p class="hint" id="hero-note"></p>
+        </div>
+        <div class="hero-term-wrap">
+          <pre class="term" id="hero-term" aria-live="polite"></pre>
+          <div class="controls">
+            <button type="button" class="primary" id="hero-run"><span lang="en">Run again</span><span lang="zh">再跑一次</span></button>
+            <button type="button" id="hero-next"><span lang="en">Next digit</span><span lang="zh">换一个数字</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="wrap" aria-label="Numbers">
+      <dl class="numbers">
+        <div class="stat">
+          <dt><span lang="en">contracts live on BSC testnet</span><span lang="zh">个合约已部署在 BSC 测试网</span></dt>
+          <dd class="figure" data-count="14">14</dd>
+          <dd class="source"><span lang="en">measured, last check 2026-10-22</span><span lang="zh">实测，最近一次检查 2026-10-22</span></dd>
+        </div>
+        <div class="stat">
+          <dt><span lang="en">differences from the reference program, over 1,350 inputs on two nodes</span><span lang="zh">处与参考程序的差异，共 1,350 个输入，两个节点</span></dt>
+          <dd class="figure" data-count="0">0</dd>
+          <dd class="source"><span lang="en">measured</span><span lang="zh">实测</span></dd>
+        </div>
+        <div class="stat">
+          <dt><span lang="en">shared operator contracts that every graph model calls</span><span lang="zh">个共用算子合约，所有图模型都调用它们</span></dt>
+          <dd class="figure" data-count="15">15</dd>
+          <dd class="source"><span lang="en">pure, deployed once</span><span lang="zh">纯函数，只部署一次</span></dd>
+        </div>
+        <div class="stat">
+          <dt><span lang="en">automated tests behind the library</span><span lang="zh">个自动化测试，支撑着这套库</span></dt>
+          <dd class="figure" data-count="3300" data-suffix="+">3,300+</dd>
+          <dd class="source"><span lang="en">measured 2026-10-23</span><span lang="zh">实测，2026-10-23</span></dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- ============================================================ 1 · idea -->
+    <section class="section wrap" id="concept" aria-labelledby="concept-title">
+      <p class="kicker"><span lang="en">1 · the idea</span><span lang="zh">1 · 理念与设计</span></p>
+      <h2 class="section-title" id="concept-title"><span lang="en">A model you can audit, because it is only integers</span><span lang="zh">只由整数组成，所以能被审计的模型</span></h2>
+      <p class="intro">
+        <span lang="en">Most AI runs on a server you have to trust. A contract cannot work that way: it has no floating point and no network, and everything it computes must come out the same on every node. BNNX takes that as its design rule. A network is trained in PyTorch, then turned into integers: weights of +1 or −1, thresholds, small integer levels. Those integers are the model, and a reference program and a contract compute exactly the same ones.</span>
+        <span lang="zh">大多数 AI 跑在你只能选择相信的服务器上。合约做不到这样：它没有浮点数，也没有网络，算出的每一个结果在每个节点上都必须相同。BNNX 把这当成设计规则：网络在 PyTorch 里训练，然后变成整数：+1 或 −1 的权重、阈值、几位的整数电平。这些整数就是模型本身，参考程序和合约算出的是完全相同的整数。</span>
+      </p>
+
+      <div class="grid-2">
+        <div class="window">
+          <p class="window-title"><span lang="en">1 · integers all the way down</span><span lang="zh">1 · 全程都是整数</span></p>
+          <div class="window-body">
+            <p class="window-text"><span lang="en">One binarised neuron. Flip any input or weight: the sum of the products is an exact integer, and the output is +1 when it reaches zero. A whole layer is many of these, so the contract needs only adds and compares.</span><span lang="zh">一个二值化的神经元。翻转任意输入或权重：乘积之和是精确的整数，和大于等于 0 时输出 +1。一整层就是很多个这样的神经元，所以合约只需要加法和比较。</span></p>
+            <div id="neuron" class="neuron"></div>
+          </div>
+        </div>
+
+        <div class="window">
+          <p class="window-title"><span lang="en">2 · the same answer everywhere</span><span lang="zh">2 · 到处都是同一个答案</span></p>
+          <div class="window-body">
+            <p class="window-text"><span lang="en">The trained network becomes one fixed integer form, the IR. A reference program runs it on a laptop; the contract runs it on chain. Both return the same label and the same score for every class, and any node can be asked.</span><span lang="zh">训练好的网络变成一种固定的整数形式，叫 IR。参考程序在笔记本上运行它，合约在链上运行它。两边对每个类别返回同样的标签和同样的得分，谁都可以去问任意一个节点。</span></p>
+            <svg class="pipeline" viewBox="0 0 520 250" role="img" aria-labelledby="pipe-title pipe-desc">
+              <title id="pipe-title">From training to a matching answer</title>
+              <desc id="pipe-desc">PyTorch training becomes integer IR. The IR runs in a reference program and in a contract on chain, and both give the same integers.</desc>
+              <g class="pipe-box"><rect x="8" y="94" width="104" height="56" rx="18"/><text x="60" y="127">PyTorch</text></g>
+              <g class="pipe-box"><rect x="170" y="94" width="104" height="56" rx="18"/><text x="222" y="127">integer IR</text></g>
+              <g class="pipe-box"><rect x="352" y="22" width="160" height="56" rx="18"/><text x="432" y="55">reference program</text></g>
+              <g class="pipe-box"><rect x="352" y="166" width="160" height="56" rx="18"/><text x="432" y="199">contract on chain</text></g>
+              <path class="pipe-flow" d="M112 122 H170"/>
+              <path class="pipe-flow" d="M274 118 C 312 118, 316 50, 352 50"/>
+              <path class="pipe-flow" d="M274 126 C 312 126, 316 194, 352 194"/>
+              <path class="pipe-flow keep" d="M432 78 V166"/>
+              <g class="pipe-equal"><circle cx="432" cy="122" r="21"/><text x="432" y="130">=</text></g>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2 wide-left">
+        <div>
+          <h3 class="sub"><span lang="en">3 · free to read, easy to compose</span><span lang="zh">3 · 读取免费，容易组合</span></h3>
+          <p class="prose-text">
+            <span lang="en">Anyone can call a model with a read-only <code>eth_call</code>: no wallet, no fee. Another contract can call it too, inside a transaction, and act on the answer. That is how the gomoku game on this page works: the game contract asks the network for each move in the player's own transaction.</span>
+            <span lang="zh">任何人都可以用只读的 <code>eth_call</code> 调用模型：不需要钱包，也不收费。别的合约也可以在交易里调用它，并按答案行动。这页上的五子棋就是这样做的：对弈合约在玩家自己的交易里向网络要每一步棋。</span>
+          </p>
+          <ul class="notes">
+            <li><span lang="en"><strong>Cheap arithmetic.</strong> A ±1 multiply-add costs about 0.65 gas and an int8 one about 6.1 (measured, unoptimised), so small networks fit in one call.</span><span lang="zh"><strong>便宜的算术。</strong>一次 ±1 乘加约 0.65 gas，int8 约 6.1 gas（实测，未优化），所以小网络放得进一次调用。</span></li>
+            <li><span lang="en"><strong>Weights are contract code.</strong> They live in immutable data contracts of at most 24,000 bytes and are read with <code>EXTCODECOPY</code>: no storage, no owner.</span><span lang="zh"><strong>权重就是合约代码。</strong>它们放在不可变的数据合约里，每个最多 24,000 字节，用 <code>EXTCODECOPY</code> 读取：没有存储，没有管理员。</span></li>
+            <li><span lang="en"><strong>Pure by construction.</strong> The runner reads no state and no block data, so its output depends on the input only.</span><span lang="zh"><strong>从构造上就是纯函数。</strong>运行器不读任何状态和区块数据，所以输出只取决于输入。</span></li>
+            <li><span lang="en"><strong>Every claim can be checked.</strong> The IR hash names the model, and <code>bnnx verify</code> compares the contract's code and data with it.</span><span lang="zh"><strong>每个说法都能核对。</strong>IR 哈希给模型命名，<code>bnnx verify</code> 把合约的代码和数据与它逐项比对。</span></li>
+          </ul>
+        </div>
+        <figure class="window code-window">
+          <figcaption class="code-bar"><span class="code-title">DigitReader.sol</span><button type="button" class="copy"></button></figcaption>
+          <pre class="code" data-lang="solidity">// ask a model from any contract
+interface IBnnxModel {
+    function classify(bytes calldata pixels)
+        external view
+        returns (uint256 label, int256[] memory scores);
+
+    function modelInfo()
+        external view
+        returns (bytes32 name, bytes32 irHash,
+                 uint256 inputLength, uint256 numClasses);
+}
+
+contract DigitReader {
+    IBnnxModel public immutable model;
+
+    constructor(address runner) {
+        model = IBnnxModel(runner);
+    }
+
+    function read(bytes calldata pixels)
+        external view returns (uint256 label)
+    {
+        (label, ) = model.classify(pixels);
+    }
+}</pre>
+        </figure>
+      </div>
+
+      <h3 class="sub" id="tapeout"><span lang="en">Where BNNX fits in TapeOut</span><span lang="zh">BNNX 在 TapeOut 里的位置</span></h3>
+      <p class="prose-text">
+        <span lang="en">TapeOut already puts a site's front end on chain (DeWeb) and its state in a container. What a site cannot yet do is call logic that is just as verifiable. BNNX is the project that supplies that missing layer: a trained model becomes a pure contract that a page, a circuit's owner or another contract can call, and anyone can check.</span>
+        <span lang="zh">TapeOut 已经把网站的前端放上了链（DeWeb），把状态放进了容器。网站目前还做不到的，是调用同样可验证的逻辑。BNNX 就是补上这一层的项目：训练好的模型变成一个纯函数合约，页面、电路持有人或别的合约都能调用，任何人都能核对。</span>
+      </p>
+      <div class="grid-3 fit">
+        <article class="card">
+          <p class="tag done"><span lang="en">true today</span><span lang="zh">今天已经成立</span></p>
+          <ul class="notes tight">
+            <li><span lang="en">This page is a DeWeb site. It is built to TapeKit's rules (relative paths, 24,000-byte chunks, nothing loaded from outside) and is meant to be published into a TapeOut container on X Layer. You are looking at a preview copy on an ordinary server.</span><span lang="zh">这个页面就是一个 DeWeb 站。按 TapeKit 的规则做（相对路径、24,000 字节分块、不加载任何外部资源），准备发布到 X Layer 上的 TapeOut 容器里。你现在看的是放在普通服务器上的预览副本。</span></li>
+            <li><span lang="en">The model contracts follow the pure-function rules that a component slot needs: no storage, no external calls, output depends on the input only.</span><span lang="zh">模型合约遵守元件插槽需要的纯函数规则：不读存储、不调外部合约，输出只取决于输入。</span></li>
+            <li><span lang="en">A command-line publisher for DeWeb sites was built for this page. TapeKit's README lists a publishing CLI as still to be done.</span><span lang="zh">为这个页面做了一个 DeWeb 站点的命令行发布工具。TapeKit 的 README 里把发布命令行列为尚未完成的事。</span></li>
+          </ul>
+        </article>
+        <article class="card">
+          <p class="tag idea"><span lang="en">next, not decided</span><span lang="zh">下一步，尚未定</span></p>
+          <ul class="notes tight">
+            <li><span lang="en">Put a model into a V2 component slot, once its interface is available.</span><span lang="zh">等 V2 元件插槽的接口拿到之后，把模型放进插槽。</span></li>
+            <li><span lang="en">Deploy the models on mainnet, and publish this page there too.</span><span lang="zh">把模型部署到主网，并在主网上也发布这个页面。</span></li>
+            <li><span lang="en">Whatever else TapeOut wants from an on-chain model; this list is a proposal, not a plan.</span><span lang="zh">TapeOut 还希望链上模型做什么，就做什么；这份清单是提议，不是计划。</span></li>
+          </ul>
+        </article>
+        <article class="card">
+          <p class="tag idea"><span lang="en">not yet</span><span lang="zh">目前还没有</span></p>
+          <ul class="notes tight">
+            <li><span lang="en">The models are standalone contracts on BSC testnet. They are not TapeOut circuits or processors, and no TapeOut product calls them yet.</span><span lang="zh">模型是 BSC 测试网上独立的合约，不是 TapeOut 的电路或处理器，也还没有任何 TapeOut 产品在调用它们。</span></li>
+            <li><span lang="en">Nothing is deployed on mainnet, and no token is involved.</span><span lang="zh">主网上没有部署任何东西，也不涉及任何代币。</span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================================ 2 · progress -->
+    <section class="section wrap" id="progress" aria-labelledby="progress-title">
+      <p class="kicker"><span lang="en">2 · where it stands</span><span lang="zh">2 · 项目进展</span></p>
+      <h2 class="section-title" id="progress-title"><span lang="en">From a first digit model to a whole toolchain</span><span lang="zh">从第一个数字模型到一整套工具链</span></h2>
+      <p class="intro">
+        <span lang="en">Everything below was built and checked on BSC testnet between 2026-09-28 and 2026-10-22. Each line points at the report it comes from.</span>
+        <span lang="zh">下面的一切都在 2026-09-28 到 2026-10-22 之间做完，并在 BSC 测试网上检查过。每一条都指向它所依据的报告。</span>
+      </p>
+
+      <ol class="timeline">
+        <li data-evidence="reports/v0.md">
+          <time datetime="2026-09-28">2026-09-28</time>
+          <h3><span lang="en">The first two models on chain</span><span lang="zh">前两个模型上链</span></h3>
+          <p><span lang="en">Binarised networks for digits (97.86%) and small photos (81.42%). The chain returns exactly the integers the reference runtime computes.</span><span lang="zh">二值化网络，识别手写数字（97.86%）和小图（81.42%）。链上返回的整数和参考运行时算出的完全一样。</span></p>
+        </li>
+        <li data-evidence="reports/dev-path.md">
+          <time datetime="2026-09-30">2026-09-30</time>
+          <h3><span lang="en">The developer toolkit</span><span lang="zh">开发者工具包</span></h3>
+          <p><span lang="en">A Python package and the <code>bnnx</code> command, training layers, a JavaScript SDK, a Solidity interface, receipts, a model zoo and a tutorial.</span><span lang="zh">Python 包和 <code>bnnx</code> 命令、训练层、JavaScript SDK、Solidity 接口、收据、模型库和教程。</span></p>
+        </li>
+        <li data-evidence="reports/v1-skeleton.md">
+          <time datetime="2026-10-06">2026-10-06</time>
+          <h3><span lang="en">Graph models and shared operators</span><span lang="zh">图模型和共用算子</span></h3>
+          <p><span lang="en">A model becomes a graph of nodes; small pure operator contracts are deployed once and shared by every model.</span><span lang="zh">模型变成由节点组成的图；小的纯算子合约只部署一次，所有模型共用。</span></p>
+        </li>
+        <li data-evidence="reports/v1-board-ops.md">
+          <time datetime="2026-10-08">2026-10-08</time>
+          <h3><span lang="en">Board layers, and a gomoku network</span><span lang="zh">棋盘类的层，和一个五子棋网络</span></h3>
+          <p><span lang="en">Padding, 1×1 convolutions, lookup tables and adds. A contract calls the network in one transaction and gets a correct move.</span><span lang="zh">补边、1×1 卷积、查表和相加。合约在一笔交易里调用网络，得到正确的一步棋。</span></p>
+        </li>
+        <li data-evidence="reports/v1-multibit.md">
+          <time datetime="2026-10-18">2026-10-18</time>
+          <h3><span lang="en">Few-bit layers</span><span lang="zh">多位的层</span></h3>
+          <p><span lang="en">4-bit activations and int8 weights. A CIFAR-10 network (79.63%) that a contract can call inside a single transaction.</span><span lang="zh">4 位激活和 int8 权重。一个 CIFAR-10 网络（79.63%），合约在单笔交易里就能调用。</span></p>
+        </li>
+        <li data-evidence="reports/qonnx-import.md">
+          <time datetime="2026-10-19">2026-10-19</time>
+          <h3><span lang="en">Networks trained by someone else</span><span lang="zh">别人训练的网络</span></h3>
+          <p><span lang="en">The QONNX importer takes a Brevitas network on chain. On 10,000 test images its labels match the original's own executor exactly.</span><span lang="zh">QONNX 导入器把一个 Brevitas 网络搬上链。在 10,000 张测试图上，标签和原模型自己的执行器完全相同。</span></p>
+        </li>
+        <li data-evidence="reports/more-chunks.md">
+          <time datetime="2026-10-20">2026-10-20</time>
+          <h3><span lang="en">Bigger models</span><span lang="zh">更大的模型</span></h3>
+          <p><span lang="en">A new dispatcher takes up to 64 data chunks. A 21-chunk digit network is the first model past the old limit of 16.</span><span lang="zh">新的调度合约最多支持 64 个数据块。一个 21 块的数字网络，是第一个超过原来 16 块上限的模型。</span></p>
+        </li>
+        <li data-evidence="reports/qonnx-import.md">
+          <time datetime="2026-10-21">2026-10-21</time>
+          <h3><span lang="en">A second imported network</span><span lang="zh">第二个导入的网络</span></h3>
+          <p><span lang="en">LFC from the QONNX model zoo: 98.81% on MNIST, no label differs from the original on 10,000 test images.</span><span lang="zh">来自 QONNX 模型库的 LFC：MNIST 上 98.81%，10,000 张测试图上没有一个标签与原模型不同。</span></p>
+        </li>
+        <li data-evidence="reports/gomoku.md">
+          <time datetime="2026-10-22">2026-10-22</time>
+          <h3><span lang="en">A whole game, played on chain</span><span lang="zh">一整盘棋，在链上下完</span></h3>
+          <p><span lang="en">A game contract lets the network play inside the player's own transactions. One full game is on BSC testnet, and every AI move was re-checked on two nodes.</span><span lang="zh">对弈合约让网络在玩家自己的交易里落子。一整盘棋在 BSC 测试网上，AI 的每一手都在两个节点上复核过。</span></p>
+        </li>
+      </ol>
+
+      <h3 class="sub"><span lang="en">The toolkit</span><span lang="zh">工具包</span></h3>
+      <div class="grid-3 tools">
+        <article class="card">
+          <h4>Python <code>bnnx</code></h4>
+          <p><span lang="en">Train binarised and few-bit networks in PyTorch with <code>bnnx.nn</code>. Reproducible CPU training; export checks the IR against PyTorch before it writes a file.</span><span lang="zh">用 <code>bnnx.nn</code> 在 PyTorch 里训练二值和多位网络。CPU 训练可复现；导出时先对照 PyTorch 检查 IR，再写文件。</span></p>
+        </article>
+        <article class="card">
+          <h4><span lang="en">The command line</span><span lang="zh">命令行</span></h4>
+          <p><span lang="en">12 commands: <code>inspect</code>, <code>compile</code>, <code>deploy</code>, <code>verify</code>, <code>call</code>, <code>replay</code>, <code>import-qonnx</code> and more. Your wallet signs; no command takes a private key.</span><span lang="zh">12 个命令：<code>inspect</code>、<code>compile</code>、<code>deploy</code>、<code>verify</code>、<code>call</code>、<code>replay</code>、<code>import-qonnx</code> 等。用你自己的钱包签名，没有任何命令接受私钥。</span></p>
+        </article>
+        <article class="card">
+          <h4><span lang="en">JavaScript SDK</span><span lang="zh">JavaScript SDK</span></h4>
+          <p><span lang="en">No dependencies, plain ES modules, several nodes at once, receipts that <code>bnnx replay</code> can check. The demos below run on it.</span><span lang="zh">没有依赖，纯 ES 模块，同时问多个节点，收据可以用 <code>bnnx replay</code> 核对。下面的演示就是用它跑的。</span></p>
+        </article>
+        <article class="card">
+          <h4><span lang="en">Solidity interface</span><span lang="zh">Solidity 接口</span></h4>
+          <p><span lang="en"><code>IBnnxModel</code> with <code>classify</code> and <code>modelInfo</code>, an example consumer, and a whole gomoku game contract.</span><span lang="zh"><code>IBnnxModel</code>：<code>classify</code> 和 <code>modelInfo</code>，一个示例消费合约，以及一整个五子棋对弈合约。</span></p>
+        </article>
+        <article class="card">
+          <h4><span lang="en">QONNX importer</span><span lang="zh">QONNX 导入器</span></h4>
+          <p><span lang="en">Brevitas and FINN networks in, a model out, with an exact self-check. 3 imported networks are live.</span><span lang="zh">Brevitas 和 FINN 的网络进去，模型出来，带精确的自检。现在有 3 个导入的网络在链上。</span></p>
+        </article>
+        <article class="card">
+          <h4><span lang="en">Reference runtime and checks</span><span lang="zh">参考运行时与检查</span></h4>
+          <p><span lang="en">An integer-only reference implementation, <code>bnnx verify</code> on two nodes, a fuzzer that deploys random models, and 3,300+ automated tests.</span><span lang="zh">纯整数的参考实现、在两个节点上跑的 <code>bnnx verify</code>、会部署随机模型的模糊测试，以及 3,300+ 个自动化测试。</span></p>
+        </article>
+      </div>
+
+      <h3 class="sub"><span lang="en">What you could build with it</span><span lang="zh">可以拿它做什么</span></h3>
+      <p class="prose-text note-line"><span lang="en">The first and last are done. The rest are ideas: nothing here is built yet.</span><span lang="zh">第一个和最后一个已经做到了，其余是想法：这里没有哪一个已经做出来。</span></p>
+      <div class="grid-3 angles">
+        <article class="card">
+          <p class="tag done"><span lang="en">built</span><span lang="zh">已做到</span></p>
+          <h4><span lang="en">Games with an AI inside the contract</span><span lang="zh">AI 就在合约里的游戏</span></h4>
+          <p><span lang="en">The opponent is not a server. It is part of the game, and every move can be replayed.</span><span lang="zh">对手不是服务器，而是游戏的一部分，每一步都可以重放。</span></p>
+        </article>
+        <article class="card">
+          <p class="tag idea"><span lang="en">idea</span><span lang="zh">想法</span></p>
+          <h4><span lang="en">Guard rails for contracts</span><span lang="zh">合约的护栏</span></h4>
+          <p><span lang="en">A small classifier a contract consults before it acts, for example to flag an unusual input. A contract already calls a model inside one transaction.</span><span lang="zh">合约在行动之前先问一个小分类器，比如标出异常的输入。合约已经能在一笔交易里调用模型。</span></p>
+        </article>
+        <article class="card">
+          <p class="tag idea"><span lang="en">idea</span><span lang="zh">想法</span></p>
+          <h4><span lang="en">Agents for on-chain worlds</span><span lang="zh">链上世界里的智能体</span></h4>
+          <p><span lang="en">Characters whose behaviour is a network anyone can inspect and reproduce, in a game or a simulation that lives on chain.</span><span lang="zh">行为由一个任何人都能检查、能复现的网络决定的角色，放在完全跑在链上的游戏或模拟里。</span></p>
+        </article>
+        <article class="card">
+          <p class="tag idea"><span lang="en">idea</span><span lang="zh">想法</span></p>
+          <h4><span lang="en">Checking what users submit</span><span lang="zh">检查用户提交的内容</span></h4>
+          <p><span lang="en">A contest or a claim that asks for a handwritten digit or a small image, classified on chain instead of by an operator.</span><span lang="zh">比赛或申领要求提交手写数字或小图片，由链上分类，而不是由运营方说了算。</span></p>
+        </article>
+        <article class="card">
+          <p class="tag done"><span lang="en">built</span><span lang="zh">已做到</span></p>
+          <h4><span lang="en">Reproducible, auditable machine learning</span><span lang="zh">可复现、可审计的机器学习</span></h4>
+          <p><span lang="en">Anyone can rerun an inference bit for bit, and a receipt records which nodes said what.</span><span lang="zh">任何人都能逐位重跑一次推理，收据会记下哪些节点说了什么。</span></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 · demos -->
+    <section class="section wrap" id="demos" aria-labelledby="demos-title">
+      <p class="kicker"><span lang="en">3 · demos</span><span lang="zh">3 · 演示</span></p>
+      <h2 class="section-title" id="demos-title"><span lang="en">Every box here is live</span><span lang="zh">这里每一个框都是活的</span></h2>
+      <p class="intro">
+        <span lang="en">Each demo sends a free read-only call to contracts on BSC testnet, through two independent nodes. Nothing is signed. When two nodes answer differently, or one does not answer, the page says so.</span>
+        <span lang="zh">每个演示都向 BSC 测试网上的合约发免费的只读调用，经过两个互相独立的节点。不需要签名。两个节点的回答不同，或者有一个没有回答，页面都会直接说出来。</span>
+      </p>
+
+      <div class="window lab">
+        <p class="window-title"><span lang="en">digit lab · one digit, five networks</span><span lang="zh">数字实验室 · 一个数字，五个网络</span></p>
+        <div class="window-body lab-body" id="digit-lab"></div>
+      </div>
+
+      <div class="window lab">
+        <p class="window-title"><span lang="en">photo lab · one photo, three networks</span><span lang="zh">照片实验室 · 一张照片，三个网络</span></p>
+        <div class="window-body lab-body" id="photo-lab"></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="window">
+          <p class="window-title"><span lang="en">gomoku · a game recorded on chain</span><span lang="zh">五子棋 · 链上记录的一整盘</span></p>
+          <div class="window-body replay">
+            <canvas id="replay-board" class="replay-board" width="420" height="420" role="img" aria-label="A gomoku board replaying the game recorded on BSC testnet"></canvas>
+            <p class="hint" id="replay-label"></p>
+            <div class="controls">
+              <a class="btn small" href="gomoku.html" data-site-link><span lang="en">Play against it</span><span lang="zh">和它下一盘</span></a>
+              <a class="btn small quiet" href="gomoku.html#replay" data-site-link><span lang="en">Step through the game</span><span lang="zh">逐步回放</span></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="window">
+          <p class="window-title"><span lang="en">contract wall · every deployed model</span><span lang="zh">合约墙 · 每一个已部署的模型</span></p>
+          <div class="window-body">
+            <ul class="wall" id="wall"></ul>
+            <p class="hint" id="wall-status" aria-live="polite"></p>
+            <div class="controls"><button type="button" id="wall-again"><span lang="en">Ask the nodes again</span><span lang="zh">再问一遍节点</span></button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3 more">
+        <a class="card link-card" href="classify.html" data-site-link>
+          <h4><span lang="en">One network, in detail</span><span lang="zh">单个网络，看细节</span></h4>
+          <p><span lang="en">Draw a digit or upload a photo and see both nodes' scores for every class, side by side.</span><span lang="zh">画一个数字或上传一张照片，把两个节点对每个类别的得分并排看。</span></p>
+        </a>
+        <a class="card link-card" href="gomoku.html" data-site-link>
+          <h4><span lang="en">Gomoku, full size</span><span lang="zh">完整的五子棋</span></h4>
+          <p><span lang="en">Play black or white against the network, with a receipt for each of its moves.</span><span lang="zh">执黑或执白和网络对弈，它的每一手都有收据。</span></p>
+        </a>
+        <a class="card link-card" href="models.html" data-site-link>
+          <h4><span lang="en">The evidence</span><span lang="zh">全部证据</span></h4>
+          <p><span lang="en">Addresses, hashes, measured gas and a button that checks every model on two nodes.</span><span lang="zh">地址、哈希、实测 gas，还有一个在两个节点上核对每个模型的按钮。</span></p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============================================================ 4 · build -->
+    <section class="section wrap" id="build" aria-labelledby="build-title">
+      <p class="kicker"><span lang="en">4 · for developers</span><span lang="zh">4 · 给开发者</span></p>
+      <h2 class="section-title" id="build-title"><span lang="en">Train it, deploy it, call it</span><span lang="zh">训练，部署，调用</span></h2>
+      <p class="intro">
+        <span lang="en">The toolchain is a developer preview: the repository is private while the licence is settled. The steps below are the ones we ran for every model on this page, and the commands are real. Calling and checking the deployed models needs none of it.</span>
+        <span lang="zh">工具链现在是开发者预览：许可确定之前仓库是私有的。下面的步骤，是我们给这页上每个模型都走过的步骤，命令也是真实的。调用和核对已部署的模型完全用不到这些工具。</span>
+      </p>
+
+      <div class="steps-code">
+        <div class="step-text">
+          <h3 class="sub"><span lang="en">Check a deployed model in one command</span><span lang="zh">一条命令核对一个已部署的模型</span></h3>
+          <p><span lang="en">With Foundry installed, ask a node what the contract says it is. The second line of the answer is the IR hash. Ask a second node and it is the same.</span><span lang="zh">装好 Foundry，问节点这个合约自称是什么。答案的第二行是 IR 哈希。换一个节点问，是同一个。</span></p>
+        </div>
+        <figure class="window code-window">
+          <figcaption class="code-bar"><span class="code-title">bash</span><button type="button" class="copy"></button></figcaption>
+          <pre class="code" data-lang="bash">cast call 0x9B1FE44987bC449d28aC8c77e6027A6596c91901 \
+  "modelInfo()(bytes32,bytes32,uint256,uint256)" \
+  --rpc-url https://bsc-testnet-rpc.publicnode.com
+
+# 0x64312d6d6e697374...   the name, "d1-mnist"
+# 0x4fd07609d945...b831ec6d   the IR hash
+# 784                     input bytes
+# 10                      classes</pre>
+        </figure>
+
+        <div class="step-text">
+          <h3 class="sub"><span lang="en">Train and export</span><span lang="zh">训练并导出</span></h3>
+          <p><span lang="en"><code>bnnx.nn</code> checks the layers against the on-chain limits as you put them together. Export compares the integer model with PyTorch before it writes anything, and prints the IR hash.</span><span lang="zh"><code>bnnx.nn</code> 在你搭层的时候就按链上的限制检查。导出时先把整数模型和 PyTorch 对比，再写文件，并给出 IR 哈希。</span></p>
+        </div>
+        <figure class="window code-window">
+          <figcaption class="code-bar"><span class="code-title">train.py</span><button type="button" class="copy"></button></figcaption>
+          <pre class="code" data-lang="python">import bnnx.nn as bn
+
+model = bn.templates.mlp((28, 28, 1), hidden=(256,),
+                         classes=10)
+print(model.summary())  # size, gas per call, a verdict
+
+bn.fit(model, (x_train, y_train), (x_val, y_val),
+       epochs=5, batch=256, lr=1e-2, seed=0)
+
+# checks the integer model against PyTorch,
+# then writes it and returns its IR hash
+ir_hash = model.cpu().export(
+    "models/my-digits", name="my-digits",
+    classes=[str(d) for d in range(10)])</pre>
+        </figure>
+
+        <div class="step-text">
+          <h3 class="sub"><span lang="en">Deploy and verify</span><span lang="zh">部署并核对</span></h3>
+          <p><span lang="en">Foundry signs with your own keystore, so the contracts are yours. <code>deploy</code> simulates until you add <code>--broadcast</code>. <code>verify</code> compares the chain with the model file and the reference program on two nodes.</span><span lang="zh">Foundry 用你自己的密钥库签名，合约归你所有。不加 <code>--broadcast</code> 时 <code>deploy</code> 只做模拟。<code>verify</code> 在两个节点上，把链上内容和模型文件、参考程序逐项比对。</span></p>
+        </div>
+        <figure class="window code-window">
+          <figcaption class="code-bar"><span class="code-title">bash</span><button type="button" class="copy"></button></figcaption>
+          <pre class="code" data-lang="bash"># size and gas per call, before you spend anything
+bnnx inspect models/my-digits
+
+# dry run: simulates, sends nothing
+bnnx deploy models/my-digits \
+  --rpc-url https://bsc-testnet-rpc.publicnode.com \
+  --account dev
+
+# for real, signed by your own Foundry keystore
+bnnx deploy models/my-digits \
+  --rpc-url https://bsc-testnet-rpc.publicnode.com \
+  --account dev --record my-digits.json --broadcast
+
+# the chain against the model file and the reference
+# program, on two nodes
+bnnx verify models/my-digits \
+  --deployment my-digits.json --random 100 \
+  --rpc https://bsc-testnet-rpc.publicnode.com \
+  --rpc https://bsc-testnet-dataseed.bnbchain.org</pre>
+        </figure>
+
+        <div class="step-text">
+          <h3 class="sub"><span lang="en">Call it from a page</span><span lang="zh">在网页里调用</span></h3>
+          <p><span lang="en">The SDK has no dependencies and no build step, so a static page, even one stored on chain, can import it. It asks every node you list and says whether they agreed.</span><span lang="zh">SDK 没有依赖，也不需要构建，所以静态页面，哪怕是存放在链上的页面，也能直接引入。它会问你列出的每个节点，并告诉你它们是否一致。</span></p>
+        </div>
+        <figure class="window code-window">
+          <figcaption class="code-bar"><span class="code-title">page.js</span><button type="button" class="copy"></button></figcaption>
+          <pre class="code" data-lang="javascript">import { classifyOnChain, zooDeployment,
+         zooModel, checkModelInfo } from "bnnx";
+
+const nodes = [
+  { label: "publicnode",
+    url: "https://bsc-testnet-rpc.publicnode.com" },
+  { label: "bnbchain",
+    url: "https://bsc-testnet-dataseed.bnbchain.org" },
+];
+const { runner } = zooDeployment("d1-mnist", 97);
+
+const identity = await checkModelInfo({
+  address: runner,
+  expectedIrHash: zooModel("d1-mnist").irHash,
+  nodes,
+});
+const result = await classifyOnChain({
+  address: runner, pixels: new Uint8Array(784), nodes,
+});
+console.log(identity.ok, result.agree,
+            result.calls[0].label, result.calls[0].scores);</pre>
+        </figure>
+
+        <div class="step-text">
+          <h3 class="sub"><span lang="en">Bring a network from Brevitas</span><span lang="zh">导入 Brevitas 的网络</span></h3>
+          <p><span lang="en">Networks exported as QONNX (the format of AMD's Brevitas and FINN) are converted instead of retrained. Three of the models on this page were made this way.</span><span lang="zh">导出成 QONNX（AMD 的 Brevitas 和 FINN 使用的格式）的网络直接转换，不用重新训练。这页上有三个模型就是这样来的。</span></p>
+        </div>
+        <figure class="window code-window">
+          <figcaption class="code-bar"><span class="code-title">bash</span><button type="button" class="copy"></button></figcaption>
+          <pre class="code" data-lang="bash">bnnx import-qonnx TFC_1W2A.onnx models/tfc-w1a2-qonnx \
+  --classes 0,1,2,3,4,5,6,7,8,9</pre>
+        </figure>
+      </div>
+
+      <h3 class="sub" id="limits"><span lang="en">Limits you should know about</span><span lang="zh">需要知道的限制</span></h3>
+      <div class="window limits-window">
+        <p class="window-title"><span lang="en">limits, as measured or specified</span><span lang="zh">限制，实测或规定如此</span></p>
+        <dl class="limits">
+          <div><dt><span lang="en">One transaction</span><span lang="zh">单笔交易</span></dt><dd><span lang="en">At most 16,777,216 gas on BSC. A model that needs more only runs as a read-only call: the CIFAR-10 network of 2026-10-18 fits (16.1M gas), the 44.3M-gas CNV network does not.</span><span lang="zh">BSC 上最多 16,777,216 gas。需要更多的模型只能作为只读调用运行：2026-10-18 的 CIFAR-10 网络放得下（16.1M gas），44.3M gas 的 CNV 网络放不下。</span></dd></div>
+          <div><dt><span lang="en">One read-only call</span><span lang="zh">一次只读调用</span></dt><dd><span lang="en">About 50M gas on public nodes and about 286M on BNB Chain's own node (measured 2026-09-28). Nodes differ, so the demos ask two.</span><span lang="zh">公共节点约 50M gas，BNB Chain 官方节点约 286M（2026-09-28 实测）。节点各不相同，所以演示里同时问两个。</span></dd></div>
+          <div><dt><span lang="en">Size</span><span lang="zh">大小</span></dt><dd><span lang="en">Data contracts hold at most 24,000 bytes each. A sequential model takes up to 16 of them, a graph model up to 64 (about 1.5 MB).</span><span lang="zh">每个数据合约最多存 24,000 字节。顺序模型最多 16 个，图模型最多 64 个（约 1.5 MB）。</span></dd></div>
+          <div><dt><span lang="en">Arithmetic</span><span lang="zh">运算</span></dt><dd><span lang="en">Weights are ±1 or int8. Activations are ±1 or 2 to 4 bits. No floating point; batch normalisation is folded into thresholds. Layers have at most 256 channels; convolutions are 3×3 or 1×1, stride 1 or 2.</span><span lang="zh">权重是 ±1 或 int8。激活是 ±1 或 2 到 4 位。没有浮点数；批归一化折进阈值。每层最多 256 个通道；卷积是 3×3 或 1×1，步长 1 或 2。</span></dd></div>
+          <div><dt><span lang="en">Input and output</span><span lang="zh">输入和输出</span></dt><dd><span lang="en">The input is uint8 values in height, width, channel order, exactly the length <code>modelInfo()</code> says. The output is one integer score per class; ties go to the lowest index.</span><span lang="zh">输入是按高、宽、通道顺序排列的 uint8，长度必须正好等于 <code>modelInfo()</code> 给出的值。输出是每个类别一个整数得分；平局取序号最小的。</span></dd></div>
+          <div><dt><span lang="en">Cost</span><span lang="zh">成本</span></dt><dd><span lang="en">About 0.65 gas per ±1 multiply-add and 6.1 per int8 one (measured, unoptimised). Storing a model costs about 0.0105 BNB per MiB at 0.05 gwei (estimate).</span><span lang="zh">每次 ±1 乘加约 0.65 gas，int8 约 6.1 gas（实测，未优化）。存一个模型每 MiB 约 0.0105 BNB（按 0.05 gwei 估算）。</span></dd></div>
+          <div><dt><span lang="en">Where it runs</span><span lang="zh">在哪里运行</span></dt><dd><span lang="en">BSC testnet only. Nothing is deployed on mainnet yet, and the toolchain is not public yet.</span><span lang="zh">只在 BSC 测试网。主网上还没有部署任何东西，工具链也还没有公开。</span></dd></div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="colophon wrap">
+    <p>
+      <span lang="en">Everything here runs against contracts on BSC testnet. This page never asks for a wallet, nothing is signed, and testnet coins have no value. This is a preview copy on an ordinary server; the on-chain copy (X Layer, container 1.2.375, tape://1.2.375.tape) is not published yet.</span>
+      <span lang="zh">这里的一切都跑在 BSC 测试网的合约上。页面从不要求连接钱包，不需要签名，测试币没有价值。这是放在普通服务器上的预览副本；链上的副本（X Layer 容器 1.2.375，tape://1.2.375.tape）还没有发布。</span>
+    </p>
+  </footer>
+
+  <script type="module" src="site-code.js"></script>
+  <script type="module" src="home.js"></script>
+</body>
+</html>

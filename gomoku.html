@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BNNX · gomoku against an on-chain network</title>
+  <meta name="description" content="Play gomoku against a neural network that runs as a contract on BSC testnet. Every AI move is a free read-only call answered by two independent RPC operators.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="gomoku.css">
+  <link rel="stylesheet" href="site-theme.css">
+  <link rel="stylesheet" href="site-nav.css">
+  <script src="site-lang.js" data-fixed="en"></script>
+</head>
+<body>
+  <header class="sitenav"><div class="sitenav-row"><a class="brand" href="index.html" data-site-link>BNNX</a><nav aria-label="Site"><a href="index.html#concept" data-site-link><span lang="en">Idea</span><span lang="zh">理念</span></a><a href="index.html#progress" data-site-link><span lang="en">Progress</span><span lang="zh">进展</span></a><a href="index.html#demos" aria-current="page" data-site-link><span lang="en">Demos</span><span lang="zh">演示</span></a><a href="index.html#build" data-site-link><span lang="en">Build</span><span lang="zh">开发</span></a><a href="models.html" data-site-link><span lang="en">Models</span><span lang="zh">模型</span></a></nav></div></header>
+  <p class="testnet-notice"><span lang="en">Preview copy · BSC testnet, not mainnet. Read-only calls: no wallet, nothing to sign.</span><span lang="zh">预览副本 · BSC 测试网，不是主网。只读调用：不需要钱包，没有签名。</span></p>
+
+  <header class="masthead">
+    <p class="eyebrow">BNNX · <span id="network-name">BSC testnet</span> · gomoku</p>
+    <h1>Gomoku against a network that lives in a contract</h1>
+    <p class="lede">You play here, in your browser. Each move of the AI is one read-only call to the model contract,
+      sent to two independent RPC operators: the model scores all 225 points, and the page plays the highest-scoring
+      empty one. No wallet, no fee. The two nodes must return identical scores, or the move is not played.</p>
+  </header>
+
+  <main>
+    <section class="bench" id="play" aria-labelledby="play-title">
+      <div class="bench-head">
+        <h2 id="play-title">Play</h2>
+        <p class="spec" id="model-spec"></p>
+      </div>
+      <div class="bench-body gomoku-body">
+        <div class="input">
+          <div class="controls" role="group" aria-label="New game">
+            <button type="button" class="primary" id="new-black">New game: you play black</button>
+            <button type="button" id="new-white">New game: the AI plays black</button>
+          </div>
+          <div class="board" id="play-board" role="group" aria-label="Board, 15 by 15. Use the arrow keys to move and Enter to place a stone."></div>
+          <p class="hint">Rules: 15 × 15, black moves first, five or more in a row wins, no forbidden moves, a full board is a draw.</p>
+        </div>
+        <div class="output" id="play-out"></div>
+        <p class="visually-hidden" id="play-announce" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="bench" id="replay" aria-labelledby="replay-title">
+      <div class="bench-head">
+        <h2 id="replay-title">A game played on chain</h2>
+        <p class="spec" id="replay-spec"></p>
+      </div>
+      <div class="bench-body gomoku-body">
+        <div class="input">
+          <div class="board" id="replay-board" role="group" aria-label="The recorded game's board"></div>
+          <div class="controls" role="group" aria-label="Step through the game">
+            <button type="button" id="replay-first">First</button>
+            <button type="button" id="replay-back">Back</button>
+            <button type="button" id="replay-next">Next</button>
+            <button type="button" id="replay-last">Last</button>
+          </div>
+        </div>
+        <div class="output" id="replay-out" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="facts" aria-labelledby="facts-title">
+      <h2 id="facts-title">What you are calling</h2>
+      <div class="fact-grid" id="facts"></div>
+      <div class="howto">
+        <h3>Check a move yourself</h3>
+        <p>Every AI move on this page comes with a receipt: the block it was read at, the input and every node's
+          answer. Save it and replay it with the reference runtime: <code>bnnx replay receipt.json --model models/gomoku-mb</code>.
+          The page has no offline reference for your positions, so it shows whether the nodes agree, not whether they are right.</p>
+        <pre><code id="cast-command"></code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <p>BNNX. This page is plain HTML and JavaScript with no external files; the only network traffic is the JSON-RPC
+      calls to <span id="node-hosts">the two RPC nodes</span>. <a href="index.html">The image classifiers</a>.</p>
+  </footer>
+
+  <script type="module" src="gomoku-app.js"></script>
+</body>
+</html>

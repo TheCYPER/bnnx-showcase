@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BNNX · on-chain image classifiers</title>
+  <meta name="description" content="Two binarized neural networks deployed as contracts on BSC testnet. Every classification is a read-only eth_call answered by two independent RPC operators.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="site-theme.css">
+  <link rel="stylesheet" href="site-nav.css">
+  <script src="site-lang.js" data-fixed="en"></script>
+</head>
+<body>
+  <header class="sitenav"><div class="sitenav-row"><a class="brand" href="index.html" data-site-link>BNNX</a><nav aria-label="Site"><a href="index.html#concept" data-site-link><span lang="en">Idea</span><span lang="zh">理念</span></a><a href="index.html#progress" data-site-link><span lang="en">Progress</span><span lang="zh">进展</span></a><a href="index.html#demos" aria-current="page" data-site-link><span lang="en">Demos</span><span lang="zh">演示</span></a><a href="index.html#build" data-site-link><span lang="en">Build</span><span lang="zh">开发</span></a><a href="models.html" data-site-link><span lang="en">Models</span><span lang="zh">模型</span></a></nav></div></header>
+  <p class="testnet-notice"><span lang="en">Preview copy · BSC testnet, not mainnet. Read-only calls: no wallet, nothing to sign.</span><span lang="zh">预览副本 · BSC 测试网，不是主网。只读调用：不需要钱包，没有签名。</span></p>
+
+  <header class="masthead">
+    <p class="eyebrow">BNNX v0 · <span id="network-name">BSC testnet</span> · chain <span id="chain-id">97</span></p>
+    <h1>Neural networks that answer inside one <code>eth_call</code></h1>
+    <p class="lede">Two binarized networks run as contracts. Each classification on this page is a free, read-only call
+      sent to two independent RPC operators. The answers are integers, so the two nodes either agree exactly or they don't.</p>
+  </header>
+
+  <main>
+    <section class="bench" id="digits" aria-labelledby="digits-title">
+      <div class="bench-head">
+        <h2 id="digits-title">Handwritten digits</h2>
+        <p class="spec" id="d1-spec"></p>
+      </div>
+      <div class="bench-body">
+        <div class="input">
+          <div class="pads">
+            <figure class="pad-frame">
+              <canvas id="d1-pad" class="pad" width="280" height="280" role="img" aria-label="Drawing pad. Draw one digit with a mouse, pen or finger, or use a test digit."></canvas>
+              <figcaption>Draw one digit, large and centred</figcaption>
+            </figure>
+            <figure class="mirror-frame">
+              <canvas id="d1-bits" class="bits" width="197" height="197" role="img" aria-label="The 28 by 28 bits the contract's first layer makes from the digit"></canvas>
+              <figcaption>What the network sees: 784 bits, one per pixel ≥ 128</figcaption>
+            </figure>
+          </div>
+          <div class="controls">
+            <button type="button" class="primary" id="d1-run">Classify on chain</button>
+            <button type="button" id="d1-sample">Use a test digit</button>
+            <button type="button" id="d1-clear">Clear</button>
+          </div>
+          <p class="hint">Your drawing is cropped, scaled and centred to 28 × 28 grey pixels in your browser; only those 784 bytes are sent, as call data, to the two RPC nodes. The contract's first layer turns them into the bits shown above.</p>
+        </div>
+        <div class="output" id="d1-out" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="bench" id="photos" aria-labelledby="photos-title">
+      <div class="bench-head">
+        <h2 id="photos-title">Small colour photos</h2>
+        <p class="spec" id="d2-spec"></p>
+      </div>
+      <div class="bench-body">
+        <div class="input">
+          <div class="pads">
+            <figure class="pad-frame">
+              <canvas id="d2-preview" class="pad pixelated" width="32" height="32" role="img" aria-label="The 32 by 32 image that will be classified"></canvas>
+              <figcaption id="d2-caption">Pick a test photo or upload your own</figcaption>
+            </figure>
+            <div class="picker">
+              <p class="picker-label" id="d2-thumbs-label">CIFAR-10 test photos</p>
+              <div class="thumbs" id="d2-thumbs" role="group" aria-labelledby="d2-thumbs-label"></div>
+              <label class="upload">
+                <input type="file" id="d2-file" accept="image/*">
+                <span>Upload an image</span>
+              </label>
+              <p class="hint">Uploads are centre-cropped and shrunk to 32 × 32 in your browser; only those 3,072 bytes are sent, as call data, to the two RPC nodes.</p>
+            </div>
+          </div>
+          <div class="controls">
+            <button type="button" class="primary" id="d2-run">Classify on chain</button>
+          </div>
+        </div>
+        <div class="output" id="d2-out" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="facts" aria-labelledby="facts-title">
+      <h2 id="facts-title">What you are calling</h2>
+      <div class="fact-grid" id="facts"></div>
+      <div class="howto">
+        <h3>Check it yourself</h3>
+        <p>Read the model's identity straight from the chain with Foundry. The second value is the IR hash: the SHA-256 that pins the model's architecture and weights.</p>
+        <pre><code id="cast-command"></code></pre>
+        <p>How the deployments were verified (read-only, 2026-09-28, on both nodes): the runner's code was compared byte for byte with the build of its Solidity source, every weight chunk with the model files the IR hash names, and 100 sampled test images per model with the reference runtime. All matched.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <p>BNNX v0. This page is plain HTML and JavaScript with no external files; the only network traffic is the JSON-RPC calls to <span id="node-hosts">the two RPC nodes</span>.</p>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

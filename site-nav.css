@@ -1,0 +1,83 @@
+/* Chrome shared by every page: the pill-shaped bar at the top, the testnet notice, the language switch.
+   Colours come from site-theme.css, which every page loads before this file. */
+
+html[data-lang="en"] [lang="zh"],
+html[data-lang="zh"] [lang="en"] { display: none !important; }
+
+.sitenav {
+  position: sticky;
+  top: 12px;
+  z-index: 10;
+  max-width: 1120px;
+  margin: 12px auto 0;
+  padding: 0 12px;
+}
+
+.sitenav-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 18px;
+  padding: 8px 10px 8px 22px;
+  background: rgba(2, 52, 110, 0.82);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.brand {
+  font: 700 17px/1 var(--mono);
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-decoration: none;
+}
+
+.sitenav nav { display: flex; flex: 1 1 auto; flex-wrap: wrap; justify-content: center; gap: 2px 6px; }
+
+.sitenav nav a {
+  padding: 9px 14px;
+  font: 600 14px/1 var(--sans);
+  color: var(--desk-muted);
+  text-decoration: none;
+  border-radius: 999px;
+}
+
+.sitenav nav a:hover { color: #fff; background: rgba(255, 255, 255, 0.12); }
+
+.sitenav nav a[aria-current="page"] { color: var(--window); background: #fff; }
+
+button.lang-toggle {
+  padding: 8px 14px;
+  font: 600 13px/1 var(--mono);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+button.lang-toggle:hover { color: var(--window); background: #fff; border-color: #fff; }
+
+.testnet-notice {
+  width: fit-content;
+  max-width: calc(100% - 24px);
+  margin: 10px auto 0;
+  padding: 6px 16px;
+  font: 12px/1.4 var(--mono);
+  text-align: center;
+  color: var(--code-function);
+  background: rgba(1, 40, 86, 0.7);
+  border-radius: 999px;
+}
+
+/* Chinese headings are measured in characters, not in the narrow monospace 'ch' of the demo's masthead */
+html[data-lang="zh"] .masthead h1 { max-width: 22em; }
+
+.masthead h1, .section-title { text-wrap: balance; }
+
+@media (max-width: 640px) {
+  .sitenav { top: 8px; padding: 0 8px; }
+  .sitenav-row { border-radius: 28px; padding: 10px 12px 10px 18px; }
+  .brand { order: 1; }
+  button.lang-toggle { order: 2; margin-left: auto; }
+  .sitenav nav { order: 3; flex-basis: 100%; justify-content: flex-start; }
+  .sitenav nav a { padding: 8px 11px; font-size: 13px; }
+}
